@@ -156,3 +156,4 @@ We welcome contributions. Please follow these
 
 We use GitHub issues for tracking requests and bugs. Please post questions to
 the MediaPipe Stack Overflow with a `mediapipe` tag.
+# Recognition_italian_gesture
