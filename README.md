@@ -25,7 +25,7 @@ Il progetto è già eseguibile e testabile con i gesti da me implementati:
 Crea una cartella **trainvideoset** dove all'interno sono archiviati in cartelle i video relativi al gesto. Un gesto = una cartella con N video. Avvia **build_model.py** per ottenere i file txt e video di output mp4 con tracciamento della mano. Devi avere almeno 150 video per una parola (un gesto) per addestrare correttamente la rete. Se si vuole usarne di meno bisogna modificare 157 del file build_model
 
 ```
-python3 build.py --input_data_path=[INPUT_PATH] --output_data_path=[OUTPUT_PATH]
+python3 build_model.py --input_data_path=[INPUT_PATH] --output_data_path=[OUTPUT_PATH]
 
 ```
 
