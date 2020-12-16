@@ -3,7 +3,12 @@
 Riconoscimento di gesti umani con le mani usando il framework Hand MediaPipe e una rete neurale LSTM (Long Short Term Memory) con [MediaPipe Hand tracking](https://google.github.io/mediapipe/solutions/hands) on desktop (CPU)
 
 Il progetto è già eseguibile e testabile con i gesti da me implementati:
-- ba
+- Bacio
+- Bombazza
+- Buono
+- OMG
+- Pazzo
+- Ti prego
 
 ### ISTRUZIONI:
 
