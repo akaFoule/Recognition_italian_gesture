@@ -2,8 +2,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import os
 
-os.environ['KMP_DUPLICATE_LIB_OK']='True'
-from sklearn.metrics import accuracy_score
+#os.environ['KMP_DUPLICATE_LIB_OK']='True'
+from build_model import confusion_matrix, plot_confusion_matrix, plt, load_testdata
 import numpy as np
 import tensorflow as tf
 import argparse
@@ -66,23 +66,27 @@ def main(output_data_path):
 
     print("Caricamento dati")
     print("=========================================================")
-    x_test,Y =load_data(output_dir)
+    #x_test,Y =load_data(output_dir)
+    #print("x_test:",x_test, "Y", Y)
+    print("Caricamento completato!\n")
 
     print("New Model")
     print("=========================================================")
-    new_model = tf.keras.models.load_model('model.h5')
+    #new_model = tf.keras.models.load_model('modello_rete.h5')
+    print("Caricamento completato!\n")
 
     print("Etichette")
     print("=========================================================")
     labels = load_label()
     print(labels)
+    print("Caricamento completato!\n")
 
     print("Predizione")
     print("=========================================================")
-    xhat = x_test
-    yhat = new_model.predict(xhat)
-    predictions = np.array([np.argmax(pred) for pred in yhat])
-    print(predictions)
+    #xhat = x_test
+    #yhat = new_model.predict(xhat)
+    #predictions = np.array([np.argmax(pred) for pred in yhat])
+   # print(predictions)
 
     print("Rev Labels")
     print("=========================================================")
@@ -95,19 +99,37 @@ def main(output_data_path):
     count = 0
     txtpath = output_data_path + "result.txt"
 
-    for i in predictions:
-        print("true_label: ",Y[s]," === ","predict_label: ",rev_labels[i])
-        print("\n")
-        if rev_labels[i] == Y[s]:
-            count+=1
-        s+=1
-    print("Numero di entrate dalla media: " + str(count))
+   # for i in predictions:
+    #    print("true_label: ",Y[s]," === ","predict_label: ",rev_labels[i])
+     #   print("\n")
+     #   if rev_labels[i] == Y[s]:
+      #      count+=1
+    #    s+=1
+   # print("Numero di entrate dalla media: " + str(count))
 
-    print(accuracy_score(Y, yhat))
+    x_test, y_test = load_testdata(output_dir)
+    new_model = tf.keras.models.load_model('modello.h5')
+    x = x_test
+    yhat = new_model.predict(x)
+
+    print('Costruzione della matrice di confusione')
+    cfm = confusion_matrix(np.argmax(y_test, axis=1), np.argmax(yhat, axis=1))
+    np.set_printoptions(precision=2)
+
+    plt.figure(figsize=(10,10))
+
+    class_names = ['Bombazza', 'Bacio', 'Buono', 'OMG', 'Pazzo', 'Ti prego']
+    class_names = sorted(class_names)
+    plot_confusion_matrix(cfm, classes=class_names, title='Matrice di confusione', normalize=False)
+    plt.savefig('/Users/drissouissiakavaleriofoule/Desktop/TESI/matrix2.png')
+    print('Salvataggio OK')
+   # print("Accuratezza", accuracy_score(Y, rev_labels))
+    #print("Precisione", precision_score(np.argmax(Y), np.argmax(yhat, axis=1), average='macro'))
+    #print("Recall", recall_score(np.argmax(Y), np.argmax(yhat, axis=1), average='micro'))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Predict Sign language with Mediapipe')
     parser.add_argument("--output_data_path",help=" ")
     args=parser.parse_args()
-    output_data_path = '/Users/drissouissiakavaleriofoule/Desktop/outputvideo/Absolute/'
+    output_data_path = '/Users/drissouissiakavaleriofoule/Desktop/TESI/PROGETTO/CartellaVideo/outputvideo/Relative/'
     main(output_data_path)

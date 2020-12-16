@@ -2,7 +2,7 @@
 import os
 import argparse
 
-def main(input_data_path,output_data_path):
+def build_video(input_data_path,output_data_path):
     #comp='bazel build -c opt --define MEDIAPIPE_DISABLE_GPU=1 \mediapipe/examples/desktop/multi_hand_tracking:multi_hand_tracking_cpu'
     cmd='GLOG_logtostderr=1 bazel-bin/mediapipe/examples/desktop/multi_hand_tracking/multi_hand_tracking_cpu \
   --calculator_graph_config_file=mediapipe/graphs/hand_tracking/multi_hand_tracking_desktop_live.pbtxt'
@@ -37,6 +37,6 @@ if __name__ == "__main__":
     parser.add_argument("--input_data_path",help=" ")
     parser.add_argument("--output_data_path",help=" ")
     args=parser.parse_args()
-    input_data_path='/Users/drissouissiakavaleriofoule/Desktop/inputvideo/'
-    output_data_path='/Users/drissouissiakavaleriofoule/Desktop/outputvideo/'
-    main(input_data_path,output_data_path)
+    input_data_path='/Users/drissouissiakavaleriofoule/Desktop/TESI/PROGETTO/CartellaVideo/inputvideo/'
+    output_data_path='/Users/drissouissiakavaleriofoule/Desktop/TESI/PROGETTO/CartellaVideo/outputvideo/'
+    build_video(input_data_path,output_data_path)

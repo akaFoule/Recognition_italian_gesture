@@ -272,7 +272,7 @@ class Window(tk.Frame):
         if output_dir[-1] != '/':
             output_dir = output_dir+'/'
         x_test, Y = self.load_data(output_dir)
-        new_model = tf.keras.models.load_model('modello_rete.h5')
+        new_model = tf.keras.models.load_model('modello.h5')
         labels = self.load_label()
         xhat = x_test
         yhat = new_model.predict(xhat)
@@ -429,10 +429,10 @@ class Window(tk.Frame):
                 with open(textname, mode='r') as t:
                     numbers = [float(num) for num in t.read().split()]
                     number1, number2, number3 = self.split_list3(numbers)
-                    #print("File txt : " + str(len(number1)))
-                    #print("Dile txt tu thu hai: " + str(len(number2)))
-                    #print("Do dai file txt tu thu ba: " + str(len(number3)))
-                    #print("===================================")
+                    print("File txt : " + str(len(number1)))
+                    print("File txt dalla seconda raccolta: " + str(len(number2)))
+                    print("File txt di terze parti: " + str(len(number3)))
+                    print("===================================")
 
                     for i in range(len(number1), 4200):
                         number1.extend([0.000])
@@ -493,10 +493,10 @@ class Window(tk.Frame):
                 textname = dirname + wordname + "/" + text
                 with open(textname, mode='r') as t:
                     numbers = [float(num) for num in t.read().split()]
-                    #print("Do dai file txt ban dau: " + str(len(numbers)))
+                    print("Lunghezza txt: " + str(len(numbers)))
                     while numbers[0] == 0:
                         numbers = numbers[1:]
-                    #print("Do dai file txt luc sau: " + str(len(numbers)))
+                    print("Eseguire il seguente file txt: " + str(len(numbers)))
                     y = len(numbers)
 
         if y <= 8400:
@@ -504,7 +504,7 @@ class Window(tk.Frame):
         elif y>8400:
             x1_test, x2_test, x3_test, Y = self.load_data3(dirname)
 
-        new_model = tf.keras.models.load_model('model.h5')
+        new_model = tf.keras.models.load_model('modello.h5')
         labels = self.load_label()
         print(labels)
 
@@ -538,6 +538,6 @@ class Window(tk.Frame):
 
 if __name__ == '__main__':
     form = Tk()
-    form.geometry("1080x1080")
+    form.geometry("1000x1080")
     app = Window(form)
     form.mainloop()

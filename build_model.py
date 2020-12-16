@@ -1,11 +1,13 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import argparse
 import itertools
 import os
-#os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 import random
 import tensorflow as tf
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
+from build import build_video
 import matplotlib.pyplot as plt
 import numpy as np
 from keras import layers
@@ -15,31 +17,16 @@ from keras.optimizers import Adam
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.utils import to_categorical
 
+def load_label():
+    with open("label.txt", mode='r') as l:
+        listfile = [i for i in l.read().split()]
+        return listfile
 
-# Creazione del file con le etichette
 def make_label(text):
     with open("label.txt", "w") as f:
         f.write(text)
     f.close()
 
-def rm_zero_sequences_endlist(txtlist):
-    numbers = txtlist
-    if (numbers[-1] == 0 and numbers[-2] == 0 and numbers[-3] == 0 and numbers[-4] == 0 and numbers[-5] == 0 and
-            numbers[-6] == 0
-            and numbers[-7] == 0 and numbers[-8] == 0 and numbers[-9] == 0 and numbers[-10] == 0 and numbers[
-                -11] == 0 and numbers[-12] == 0
-            and numbers[-13] == 0 and numbers[-14] == 0 and numbers[-15] == 0 and numbers[-16] == 0 and numbers[
-                -17] == 0 and numbers[-18] == 0
-            and numbers[-19] == 0 and numbers[-20] == 0 and numbers[-21] == 0 and numbers[-22] == 0 and numbers[
-                -23] == 0 and numbers[-24] == 0
-            and numbers[-25] == 0 and numbers[-26] == 0 and numbers[-27] == 0 and numbers[-28] == 0 and numbers[
-                -29] == 0 and numbers[-30] == 0
-            and numbers[-31] == 0 and numbers[-32] == 0 and numbers[-33] == 0 and numbers[-34] == 0 and numbers[
-                -35] == 0 and numbers[-36] == 0
-            and numbers[-37] == 0 and numbers[-38] == 0 and numbers[-39] == 0 and numbers[-40] == 0 and numbers[
-                -41] == 0 and numbers[-42] == 0):
-        numbers = numbers[:-42]
-    return numbers
 
 # Per stampare la matrice di confusione
 def plot_confusion_matrix(cm, classes,
@@ -52,28 +39,28 @@ def plot_confusion_matrix(cm, classes,
     """
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
+        print("Matrice di confusione normalizzata")
     else:
         print('Confusion matrix, without normalization')
     print(cm)
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title, size=20)
+    plt.title(title, size=25)
     plt.colorbar()
     tick_marks = np.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=90, fontsize=10)
-    plt.yticks(tick_marks, classes, fontsize=10)
+    plt.xticks(tick_marks, classes, rotation=90, fontsize=16)
+    plt.yticks(tick_marks, classes, fontsize=16)
 
     fmt = '.2f' if normalize else 'd'
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         plt.text(j, i, format(cm[i, j], fmt),
                  horizontalalignment="center",
-                 color="white" if cm[i, j] > thresh else "black", fontsize=13)
+                 color="white" if cm[i, j] > thresh else "black", fontsize=16)
 
-    plt.tight_layout()
-    plt.ylabel('Etichette originali', fontsize=15)
-    plt.xlabel('Etichette predette', fontsize=15)
+    plt.tight_layout(pad=5)
+    plt.ylabel('Etichette originali\n', fontsize=18)
+    plt.xlabel('\nEtichette predette', fontsize=18)
 
 """
 Funzione per la fase di test
@@ -248,7 +235,7 @@ def main(dirname):
     print('Addestramento della rete:')
     print('========================================================')
 
-    checkpoint = ModelCheckpoint('modello_rete.h5', monitor='val_acc', verbose=1, mode='max', save_best_only=True,
+    checkpoint = ModelCheckpoint('modello.h5', monitor='val_acc', verbose=1, mode='max', save_best_only=True,
                                  save_weights_only=False, period=1)
     history = model.fit(x_train, y_train, epochs=50, batch_size=32, validation_data=(x_test, y_test),
                         callbacks=[checkpoint])
@@ -265,50 +252,61 @@ def main(dirname):
     print(x_train.shape, x_test.shape)
     print(y_train.shape, y_test.shape)
 
-    model.save('modello_rete.h5')
+    model.save('modello.h5')
 
     return epoche, history, model
 
-"""
-Il codice dopo aver creato il modello, lo testa e lo allena.
-"""
-output_data_path = '/Users/drissouissiakavaleriofoule/Desktop/outputvideo/Relative/'
-epochs, history, model = main(output_data_path)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Build con Mediapipe')
+    parser.add_argument("--input_data_path", help="Cartella di input dei file")
+    parser.add_argument("--output_data_path", help="Cartella di output dei file")
+    args = parser.parse_args()
+    input_data_path = args.input_data_path
+    output_data_path = args.output_data_path
+    build_video(input_data_path, output_data_path)
 
-# summarize history for accuracy
-plt.plot(range(epochs),history.history['acc'])
-plt.plot(range(epochs),history.history['val_acc'], 'o--')
-plt.title('Accuratezza del modello')
-plt.ylabel('Accuracy')
-plt.xlabel('Epoche')
-plt.legend(['Training', 'Validazione'], loc='upper left')
-plt.show()
+    #input_data_path='/Users/drissouissiakavaleriofoule/Desktop/TESI/PROGETTO/CartellaVideo/inputvideo/'
+    #output_data_path='/Users/drissouissiakavaleriofoule/Desktop/TESI/PROGETTO/CartellaVideo/outputvideo/'
+    output_data_path_rel = output_data_path + '/Relative/'
+    epochs, history, model = main(output_data_path_rel)
 
-# summarize history for loss
-plt.plot(range(epochs),history.history['loss'])
-plt.plot(range(epochs),history.history['val_loss'])
-plt.title('Model loss')
-plt.ylabel('Loss')
-plt.xlabel('Epoche')
-plt.legend(['Training', 'Validità'], loc='upper left')
-plt.show()
+    # summarize history for accuracy
+    plt.plot(range(epochs), history.history['acc'])
+    plt.plot(range(epochs), history.history['val_acc'], 'o--')
+    plt.title('Accuratezza del modello')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoche')
+    plt.legend(['Training', 'Validazione'], loc='upper left')
+    plt.savefig(output_data_path + '/acc_mod_rel.png')
 
-# Creazione dei dati di test, utilizzo la cartella Relative
-dirname = '/Users/drissouissiakavaleriofoule/Desktop/outputvideo/Relative/'
-x_test, y_test = load_testdata(dirname)
-new_model = tf.keras.models.load_model('modello_rete.h5')
-x = x_test
-yhat = new_model.predict(x)
-print("Accuratezza", accuracy_score(np.argmax(y_test, axis=1), np.argmax(yhat, axis=1)))
-print("Precisione", precision_score(np.argmax(y_test, axis=1), np.argmax(yhat, axis=1), average='macro'))
-print("Recall", recall_score(np.argmax(y_test, axis=1), np.argmax(yhat, axis=1), average='micro'))
+    # summarize history for loss
+    plt.plot(range(epochs),history.history['loss'])
+    plt.plot(range(epochs),history.history['val_loss'])
+    plt.title('Model loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoche')
+    plt.legend(['Training', 'Validità'], loc='upper left')
+    plt.savefig(output_data_path + '/loss_mod_rel.png')
 
-# Costruzione della matrice di confusione
-cfm = confusion_matrix(np.argmax(y_test, axis=1), np.argmax(yhat, axis=1))
-np.set_printoptions(precision=2)
+    # Creazione dei dati di test, utilizzo la cartella Relative
+    dirname = output_data_path_rel
+    x_test, y_test = load_testdata(dirname)
+    new_model = tf.keras.models.load_model('modello.h5')
+    x = x_test
+    yhat = new_model.predict(x)
 
-plt.figure(figsize=(15, 6))
-class_names = ['Bombazza', 'Bacio', 'Buono', 'Omg', 'Pazzo']
-class_names = sorted(class_names)
-plot_confusion_matrix(cfm, classes=class_names, title='Matrice di confusione\n', normalize=False)
-plt.show()
+    print("Accuratezza", accuracy_score(np.argmax(y_test, axis=1), np.argmax(yhat, axis=1)))
+    print("Precisione", precision_score(np.argmax(y_test, axis=1), np.argmax(yhat, axis=1), average='macro'))
+    print("Recall", recall_score(np.argmax(y_test, axis=1), np.argmax(yhat, axis=1), average='micro'))
+
+    # Costruzione della matrice di confusione
+    cfm = confusion_matrix(np.argmax(y_test, axis=1), np.argmax(yhat, axis=1))
+    np.set_printoptions(precision=2)
+
+    plt.figure(figsize=(10, 10))
+    class_names = load_label()
+    class_names = sorted(class_names)
+    plot_confusion_matrix(cfm, classes=class_names, title='Matrice di confusione senza normalizzazione', normalize=False)
+    plt.savefig('/Users/drissouissiakavaleriofoule/Desktop/TESI/matrix_rel.png')
+
+
