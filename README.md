@@ -2,6 +2,9 @@
 
 Riconoscimento di gesti umani con le mani usando il framework Hand MediaPipe e una rete neurale LSTM (Long Short Term Memory) con [MediaPipe Hand tracking](https://google.github.io/mediapipe/solutions/hands) on desktop (CPU)
 
+Il progetto è già eseguibile e testabile con i gesti da me implementati:
+- ba
+
 ### ISTRUZIONI:
 
 - Registra dei video, nei quali fai il gesto ch vuoi far riconoscere o apprendere alla rete
@@ -12,7 +15,7 @@ Riconoscimento di gesti umani con le mani usando il framework Hand MediaPipe e u
 - Clona il repository
 - Per il build con Bazel esegui, apri la cartella nel terminale ed esegui i comandi presenti nel file txt Comandi
 
-## 2. Create your own training data
+## 2. Crea il dataset
 
 Crea una cartella **trainvideoset** dove all'interno sono archiviati in cartelle i video relativi al gesto. Un gesto = una cartella con N video. Avvia **build_model.py** per ottenere i file txt e video di output mp4 con tracciamento della mano. Devi avere almeno 150 video per una parola (un gesto) per addestrare correttamente la rete. Se si vuole usarne di meno bisogna modificare 157 del file build_model
 
